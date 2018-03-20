@@ -14,7 +14,7 @@
 		2272AD712029483900CE3A87 /* triangles.vert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2272AD6F2029483900CE3A87 /* triangles.vert */; };
 		2272AD722029483900CE3A87 /* triangles.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2272AD702029483900CE3A87 /* triangles.frag */; };
 		7D8CDFFA20602C8100A6351D /* libSOIL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D8CDFF920602C8100A6351D /* libSOIL.dylib */; };
-		7DA1116520601C830082D04C /* OpenGL_Assignment3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22405D272028088100CD9E54 /* OpenGL_Assignment3.cpp */; };
+		7DA1116520601C830082D04C /* HJ-101088322-Assignment3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22405D272028088100CD9E54 /* HJ-101088322-Assignment3.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,7 +33,7 @@
 
 /* Begin PBXFileReference section */
 		22405D242028088100CD9E54 /* OpenGL_Assignment3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OpenGL_Assignment3; sourceTree = BUILT_PRODUCTS_DIR; };
-		22405D272028088100CD9E54 /* OpenGL_Assignment3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGL_Assignment3.cpp; sourceTree = "<group>"; };
+		22405D272028088100CD9E54 /* HJ-101088322-Assignment3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "HJ-101088322-Assignment3.cpp"; sourceTree = "<group>"; };
 		22405D2F202808C500CD9E54 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		22405D31202808CA00CD9E54 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		22405D33202808DB00CD9E54 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = Libraries/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 		22405D262028088100CD9E54 /* OpenGL Template */ = {
 			isa = PBXGroup;
 			children = (
-				22405D272028088100CD9E54 /* OpenGL_Assignment3.cpp */,
+				22405D272028088100CD9E54 /* HJ-101088322-Assignment3.cpp */,
 				7D8CDFFB20602D9900A6351D /* rubiksTexture.png */,
 				22405D3620280A5B00CD9E54 /* LoadShaders.cpp */,
 			);
@@ -158,7 +158,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7DA1116520601C830082D04C /* OpenGL_Assignment3.cpp in Sources */,
+				7DA1116520601C830082D04C /* HJ-101088322-Assignment3.cpp in Sources */,
 				22405D3820280A5C00CD9E54 /* LoadShaders.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

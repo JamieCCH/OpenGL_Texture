@@ -1,14 +1,11 @@
 //***********************************************************************************************
-// HJ-101088322-Assignment2.cpp by Jamie Ching-chun Huang,101088322 (C) 2018 All Rights Reserved.
+// HJ-101088322-Assignment3.cpp by Jamie Ching-chun Huang,101088322 (C) 2018 All Rights Reserved.
 //
-// Assignment 2 submission.
+// Assignment 3 submission.
 //
 // Description:
 // Click run to see the results.
-// Enter how many cubes would you like in the console.
-// Key 'w'/'s' zoom the camera in/out.
-// Key 'a'/'d' move the camera left/right.
-// Key 'r'/'f' move the camera up/down.
+//
 //***********************************************************************************************
 
 #include "stdlib.h"
@@ -27,10 +24,9 @@
 #define Z_AXIS glm::vec3(0,0,1)
 void keyOperations();
 
-GLuint gVAO;
 GLuint MatrixID;
 GLuint cubeVao;
-GLuint cubeIBO;
+
 
 glm::mat4 MVP;
 glm::mat4 View;
@@ -66,23 +62,23 @@ void init(void){
     // Projection matrix : 45 Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     
-    currentCamPos = glm::vec3(0.0f,0.0f,4.0f);
+    currentCamPos = glm::vec3(-2.0f,2.0f,3.0f);
     currentCamVel = glm::vec3(0.0f);
-    
+
     // Camera matrix
     View = glm::lookAt(
-                       currentCamPos, // Camera is at (4,3,3), in World Space
+                       currentCamPos, // Camera is at (-2,2,3), in World Space
                        glm::vec3(0,0,0), // and looks at the origin
                        glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                        );
     
- 
+//Create a VAO to describe the cube
     glGenVertexArrays(1, &cubeVao);
     glBindVertexArray(cubeVao);
-    
-    
+
     GLint width, height;
     unsigned char* image = SOIL_load_image("/Users/jamie/Documents/2018Winter/GAME2012_3DGraphicsProgramming/02_assignments/Assignment3/AS3_JamieCCHuang/OpenGL Template/rubiksTexture.png",&width, &height, 0, SOIL_LOAD_RGB);
+    
     GLuint cube_tex = 0;
     glGenTextures(1, &cube_tex);
     glActiveTexture(GL_TEXTURE0);
@@ -94,13 +90,38 @@ void init(void){
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glUniform1i(glGetUniformLocation(program, "texture0"), 0);
     
-    
+//VBO for cube vertex positions
     float  CubePoints[] = {
+        //top
+        -0.65f, 0.65f, 0.65f,   //0
+        0.65f, 0.65f, 0.65f,    //1
+        0.65f, 0.65f, -0.65f,   //2
+        -0.65f, 0.65f, -0.65f,  //3
         //front
-        -0.5f, -0.5f, 0.0f, //buttom left
-        0.5f, -0.5f, 0.0f, //buttom right
-        0.5f, 0.5f, 0.0f, //top right
-        -0.5f, 0.5f, 0.0f, //top left
+        -0.65f, -0.65f, 0.65f,  //buttom left    //4
+        0.65f, -0.65f, 0.65f,   //buttom right   //5
+        0.65f, 0.65f, 0.65f,    //top right      //6
+        -0.65f, 0.65f, 0.65f,   //top left       //7
+        //left
+        -0.65f, -0.65f, -0.65f, //8
+        -0.65f, -0.65f, 0.65f,  //9
+        -0.65f, 0.65f, 0.65f,   //10
+        -0.65f, 0.65f, -0.65f,  //11
+        //bottom
+        -0.65f, -0.65f, 0.65f,  //0 12
+        0.65f, -0.65f, 0.65f,   //1 13
+        0.65f, -0.65f, -0.65f,  //5 14
+        -0.65f, -0.65f, -0.65f, //4 15
+        //right
+        0.65f, -0.65f, 0.65f,   //16
+        0.65f, -0.65f, -0.65f,  //17
+        0.65f, 0.65f, -0.65f,   //18
+        0.65f, 0.65f, 0.65f,    //19
+        //back
+        -0.65f, -0.65f, -0.65f, //20
+        0.65f, -0.65f, -0.65f,  //5 21
+        0.65f, 0.65f, -0.65f,   //6 22
+        -0.65f, 0.65f, -0.65f,  //7 23
     };
     
     GLuint CubePointsVbo = 0;
@@ -111,48 +132,91 @@ void init(void){
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(0);
     
-    float CubeColor[] = {
-        1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-    };
+//VBO for cube color positions
+//    float CubeColor[] = {
+//        1.0, 0.0, 0.0,
+//        1.0, 0.0, 0.0,
+//        1.0, 0.0, 0.0,
+//        1.0, 0.0, 0.0,
+//    };
+//
+//    GLuint CubeColorVbo = 0;
+//    glGenBuffers(1, &CubeColorVbo);
+//    glBindBuffer(GL_ARRAY_BUFFER, CubeColorVbo);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(CubeColor), CubeColor, GL_STATIC_DRAW);
+//
+//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+//    glEnableVertexAttribArray(1);
     
-    GLuint CubeColorVbo = 0;
-    glGenBuffers(1, &CubeColorVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, CubeColorVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(CubeColor), CubeColor, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(1);
-    
-    float extureCoordinates[] = {
+//VBO for vertex texture uv map.
+    float textureCoordinates[] = {
+        //top
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        //front
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
+        //left
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        //bottom
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        //right
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        //back
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
     };
-    
+
     GLuint texVbo = 0;
     glGenBuffers(1, &texVbo);
     glBindBuffer(GL_ARRAY_BUFFER, texVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(extureCoordinates), extureCoordinates, GL_STATIC_DRAW);
-    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoordinates), textureCoordinates, GL_STATIC_DRAW);
+
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(2);
     
 
     short CubeIndexList[] = {
+        //top
         0,1,2,
         0,2,3,
+        //front
+        4,5,6,
+        4,6,7,
+        //left
+        8,9,10,
+        8,10,11,
+        //bottom
+        15,14,13,
+        15,13,12,
+        //right
+        16,17,18,
+        16,18,19,
+        //back
+        21,20,23,
+        21,23,22,
     };
     
+    GLuint cubeIBO;
     glGenBuffers(1, &cubeIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(CubeIndexList), CubeIndexList, GL_STATIC_DRAW);
-    
 }
-
 
 
 void transformObject(glm::vec3 scale, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 translation){
@@ -171,7 +235,6 @@ void drawCube(){
     glBindVertexArray(cubeVao);
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-    
 }
 
 
@@ -182,19 +245,15 @@ void drawCube(){
 //
 void display(void){
     keyOperations();
+    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.3, 0.5, 0.7, 1.0);
+    
     transformObject(glm::vec3(1.0f),Y_AXIS,0,glm::vec3(0,0,0));
+//    float angle = glutGet(GLUT_ELAPSED_TIME) / 1000.0 * 45;
+//    transformObject(glm::vec3(1.0f),Y_AXIS,angle,glm::vec3(0,0,0));
     drawCube();
     
-    float angle = glutGet(GLUT_ELAPSED_TIME) / 1000.0 * 45;
-    moveDist += deltaTime*speed;
-    if(moveDist>=maxDis){
-        speed = -4.0f;
-    }else if(moveDist<=5){
-        speed = 4.0f;
-    }
-    transformObject(glm::vec3(0.5f),Y_AXIS,angle,glm::vec3(0,moveDist,0));
 
     glutSwapBuffers();
     deltaTime = (glutGet(GLUT_ELAPSED_TIME) - currentTime)/1000.0f;
@@ -289,9 +348,9 @@ int main(int argc, char** argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_3_2_CORE_PROFILE | GLUT_DOUBLE | GLUT_DEPTH);
     
-    glutInitWindowSize(1024, 768);
-    glutInitWindowPosition(0, 0);
-    glutCreateWindow("Hello World! This is funny haha!");
+    glutInitWindowSize(800, 600);
+    glutInitWindowPosition(300, 100);
+    glutCreateWindow("Huang, Jamie Ching-chun, 101088322");
     
     glewExperimental = true;
     glewInit();    //Initializes the glew and prepares the drawing pipeline.
