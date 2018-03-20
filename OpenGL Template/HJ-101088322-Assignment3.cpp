@@ -62,12 +62,12 @@ void init(void){
     // Projection matrix : 45 Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     
-    currentCamPos = glm::vec3(-2.0f,2.0f,3.0f);
+    currentCamPos = glm::vec3(0.0f,3.0f,10.0f);
     currentCamVel = glm::vec3(0.0f);
 
     // Camera matrix
     View = glm::lookAt(
-                       currentCamPos, // Camera is at (-2,2,3), in World Space
+                       currentCamPos, // Camera position in World Space
                        glm::vec3(0,0,0), // and looks at the origin
                        glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                        );
@@ -249,9 +249,12 @@ void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.3, 0.5, 0.7, 1.0);
     
-    transformObject(glm::vec3(1.0f),Y_AXIS,0,glm::vec3(0,0,0));
-//    float angle = glutGet(GLUT_ELAPSED_TIME) / 1000.0 * 45;
-//    transformObject(glm::vec3(1.0f),Y_AXIS,angle,glm::vec3(0,0,0));
+//    transformObject(glm::vec3(1.0f),Y_AXIS,0,glm::vec3(0,0,0));
+    float angle = glutGet(GLUT_ELAPSED_TIME) / 1000.0 * 45;
+    transformObject(glm::vec3(1.0f),Y_AXIS,angle,glm::vec3(3,0,0));
+    drawCube();
+    
+    transformObject(glm::vec3(1.0f),Y_AXIS,-angle,glm::vec3(-3,0,0));
     drawCube();
     
 
@@ -289,7 +292,7 @@ void keyOperations (void) {
         currentCamPos.y -= cameraSpeed * (deltaTime);
     }
     View = glm::lookAt(
-                       currentCamPos, // Camera is at (4,3,3), in World Space
+                       currentCamPos,
                        glm::vec3(0,0,0), // and looks at the origin
                        glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                        );
