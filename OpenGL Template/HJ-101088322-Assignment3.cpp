@@ -26,7 +26,10 @@ void keyOperations();
 
 GLuint MatrixID;
 GLuint cubeVao;
+GLuint cube_tex;
 
+GLuint pyramidVao;
+GLuint pyramid_tex;
 
 glm::mat4 MVP;
 glm::mat4 View;
@@ -34,6 +37,7 @@ glm::mat4 Projection;
 
 glm::vec3 currentCamPos;
 glm::vec3 currentCamVel;
+
 
 int frame=0,currentTime,timebase=0;
 float deltaTime = 0;
@@ -54,7 +58,6 @@ void init(void){
     GLuint program = LoadShaders(shaders);
     glUseProgram(program);    //My Pipeline is set up
     
-    // Should I be generating some VAOs here? I don't know what I am doing, I am just an Intern
     
     // Get a handle for our "MVP" uniform
     MatrixID = glGetUniformLocation(program, "MVP");
@@ -79,7 +82,7 @@ void init(void){
     GLint width, height;
     unsigned char* image = SOIL_load_image("/Users/jamie/Documents/2018Winter/GAME2012_3DGraphicsProgramming/02_assignments/Assignment3/AS3_JamieCCHuang/OpenGL Template/rubiksTexture.png",&width, &height, 0, SOIL_LOAD_RGB);
     
-    GLuint cube_tex = 0;
+    cube_tex = 0;
     glGenTextures(1, &cube_tex);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, cube_tex);
@@ -189,7 +192,6 @@ void init(void){
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(2);
-    
 
     short CubeIndexList[] = {
         //top
@@ -216,7 +218,116 @@ void init(void){
     glGenBuffers(1, &cubeIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(CubeIndexList), CubeIndexList, GL_STATIC_DRAW);
+    
+    
+//setting VAO, VBOs and VIO for the pyramid
+    glGenVertexArrays(1, &pyramidVao);
+    glBindVertexArray(pyramidVao);
+    
+    
+    GLint width_p, height_p;
+    unsigned char* image_p = SOIL_load_image("/Users/jamie/Documents/2018Winter/GAME2012_3DGraphicsProgramming/02_assignments/Assignment3/AS3_JamieCCHuang/OpenGL Template/bonusTexture.png",&width_p, &height_p, 0, SOIL_LOAD_RGB);
+    
+    pyramid_tex = 0;
+    glGenTextures(1, &pyramid_tex);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, pyramid_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width_p, height_p, 0, GL_RGB, GL_UNSIGNED_BYTE, image_p);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+    
+    
+    //set pyramid vertices
+    float pyramidPoints[] = {
+        //front
+        0.65f, 0.0f,0.65f,
+        -0.65f,0.0f,0.65f,
+        0.0f, 1.3f, 0.0f,
+        //left
+        -0.65f,0.0f,0.65f,
+        -0.65f,0.0f,-0.65f,
+        0.0f, 1.3f, 0.0f,
+        //back
+        -0.65f,0.0f,-0.65f,
+        0.65f,0.0f,-0.65f,
+        0.0f, 1.3f, 0.0f,
+        //right
+        0.65f,0.0f,-0.65f,
+        0.65f, 0.0f,0.65f,
+        0.0f, 1.3f, 0.0f,
+        //bottom
+        0.65f, 0.0f,0.65f,  //12
+        -0.65f,0.0f,0.65f,  //13
+        -0.65f,0.0f,-0.65f, //14
+        0.65f,0.0f,-0.65f,  //15
+    };
+    
+    GLuint pyramidPointsVbo = 0;
+    glGenBuffers(1, &pyramidPointsVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, pyramidPointsVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPoints), pyramidPoints, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(0);
+    
+    
+    //set pyramid texture
+    float pyramidTextureCoord[] ={
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.5f, 0.0f,
+        
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.5f, 0.0f,
+        
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.5f, 0.0f,
+        
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.5f, 0.0f,
+        
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+    };
+    
+    GLuint texVbo_p = 0;
+    glGenBuffers(1, &texVbo_p);
+    glBindBuffer(GL_ARRAY_BUFFER, texVbo_p);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidTextureCoord), pyramidTextureCoord, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(2);
+    
+    short pyramidIndexList[] = {
+        //front
+        2,1,0,
+        //left
+        5,4,3,
+        //back
+        8,7,6,
+        //right
+        11,10,9,
+        //bottom
+        12,13,14,
+        12,14,15,
+    };
+    
+    GLuint pyramidIBO;
+    glGenBuffers(1, &pyramidIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pyramidIBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(pyramidIndexList), pyramidIndexList, GL_STATIC_DRAW);
+
 }
+
+
 
 
 void transformObject(glm::vec3 scale, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 translation){
@@ -233,8 +344,16 @@ void transformObject(glm::vec3 scale, glm::vec3 rotationAxis, float rotationAngl
 
 void drawCube(){
     glBindVertexArray(cubeVao);
+    glBindTexture(GL_TEXTURE_2D, cube_tex);
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+}
+
+void drawPyramid(){
+    glBindVertexArray(pyramidVao);
+    glBindTexture(GL_TEXTURE_2D, pyramid_tex);
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 }
 
 
@@ -257,6 +376,8 @@ void display(void){
     transformObject(glm::vec3(1.0f),Y_AXIS,-angle,glm::vec3(-3,0,0));
     drawCube();
     
+    transformObject(glm::vec3(1.5f),Y_AXIS,0,glm::vec3(0,-3,0));
+    drawPyramid();
 
     glutSwapBuffers();
     deltaTime = (glutGet(GLUT_ELAPSED_TIME) - currentTime)/1000.0f;
